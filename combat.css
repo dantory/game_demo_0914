@@ -1,0 +1,9 @@
+.xp{height:46px}
+.xp>span{flex:none}
+.xp>div{flex:1}
+.skills{display:flex;gap:4px;margin-left:8px}
+.skills b{position:relative;width:35px;height:35px;display:grid;place-items:center;color:#e7ce8b;background:linear-gradient(145deg,#3c3427,#171d23);border:1px solid #76603d;box-shadow:inset 0 0 0 2px #0c1117;font-size:17px}
+.skills em{position:absolute;left:2px;top:1px;color:#8c806a;font:700 7px monospace;font-style:normal}
+.skills .locked{filter:grayscale(1);opacity:.45}
+#overlay{inset:72px 0 46px}
+@media(max-width:760px){#overlay{inset:64px 0 46px}.skills{display:none}}
