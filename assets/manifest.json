@@ -1,14 +1,14 @@
 {
   "player": {
     "src": "assets/turn.png",
-    "scale": 0.18,
+    "scale": 0.72,
     "animations": {
-      "idle_down": {"frames": [{"x": 0, "y": 0, "w": 512, "h": 512, "anchorX": 256, "anchorY": 496}]},
-      "idle_left": {"frames": [{"x": 6168, "y": 0, "w": 512, "h": 512, "anchorX": 256, "anchorY": 496}]},
-      "idle_up": {"frames": [{"x": 4626, "y": 514, "w": 512, "h": 512, "anchorX": 256, "anchorY": 496}]},
-      "idle_right": {"frames": [{"x": 3084, "y": 1028, "w": 512, "h": 512, "anchorX": 256, "anchorY": 496}]},
-      "walk_down": {"image": "walk", "count": 30, "columns": 15, "size": 512, "step": 514, "anchorX": 256, "anchorY": 496, "fps": 15},
-      "attack_down": {"image": "attack", "count": 58, "columns": 15, "size": 512, "step": 514, "anchorX": 256, "anchorY": 496, "duration": 0.58}
+      "idle_down": {"frames": [{"x": 0, "y": 0, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
+      "idle_left": {"frames": [{"x": 1542, "y": 0, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
+      "idle_up": {"frames": [{"x": 1156.5, "y": 128.5, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
+      "idle_right": {"frames": [{"x": 771, "y": 257, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
+      "walk_down": {"image": "walk", "count": 30, "columns": 15, "size": 128, "step": 128.5, "anchorX": 64, "anchorY": 124, "fps": 15},
+      "attack_down": {"image": "attack", "count": 58, "columns": 15, "size": 128, "step": 128.5, "anchorX": 64, "anchorY": 124, "duration": 0.58}
     }
   },
   "walk": {"src": "assets/walk.png"},
