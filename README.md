@@ -1,2 +1,37 @@
-# game_demo_0914
-Personal 2D game demo — AI asset workflow and browser gameplay.
+# Ashen Courtyard · 잿빛 안뜰
+
+SpriteShip에서 만든 기사를 직접 조작하는 작은 브라우저 전투 데모.
+
+## 실행
+
+배포 주소: https://dantory.github.io/game_demo_0914/
+
+- WASD / 방향키: 이동
+- Space / J: 근접 공격 (누를 때마다 한 번)
+- 모바일: 화면 아래 방향 버튼과 공격 버튼
+- 일시정지 버튼, 승리/패배 후 재시작
+- 다섯 마리의 슬라임을 처치하면 승리
+
+## 에셋과 범위
+
+기사: SpriteShip에서 생성한 남색·금색 기사 1번 시안. 생성된 정면 걷기·공격과 방향 포즈를 활용한다. 전 방향 걷기·공격을 생성한 프로젝트는 아니다. 맵, 슬라임, 장식 및 UI는 JavaScript/CSS로 제작했다. PixelLab은 연결 테스트만 했으며 이번 버전에서 생성 비용을 사용하지 않았다.
+
+SpriteShip 사용: 시안 150 + 방향 준비 400 + 걷기 400 + 공격 400 = 1,350크레딧. 남은 크레딧 150. Godot 내보내기/실행은 이번 웹 데모의 검증 범위에 포함하지 않는다.
+
+## 개발
+
+외부 런타임 의존성 없음. 정적 파일 서버에서 실행한다.
+
+```sh
+python3 -m http.server 8080
+npm test
+```
+
+## 구조
+
+- `src/game.js`: 이동, 충돌, 전투, 렌더링
+- `src/app.js`: 로딩, UI, 키보드/터치 입력
+- `assets/manifest.json`: 실제 프레임 좌표 및 재생 설정
+- `tests/game.test.js`: 충돌, 공격, 승리·재시작, 일시정지 검증
+
+API 키는 게임에 필요하지 않다. 인증정보는 커밋하지 않는다.
