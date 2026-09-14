@@ -12,5 +12,6 @@
     }
   },
   "walk": {"src": "assets/walk.png"},
-  "attack": {"src": "assets/attack.png"}
+  "attack": {"src": "assets/attack.png"},
+  "map": {"src": "assets/courtyard-map.jpg"}
 }
