@@ -1,5 +1,5 @@
 // Fast top-down ARPG runtime. Sprite frame data lives in assets/manifest.json.
-import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,saveInventory,unequipSlot} from './items.js?v=3';
+import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,saveInventory,unequipSlot} from './items.js?v=4';
 export class Courtyard {
   constructor(canvas, manifest, images, onState) {
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.art=manifest;this.images=images;this.onState=onState;
