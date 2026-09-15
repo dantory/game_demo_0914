@@ -1,4 +1,4 @@
-import {Courtyard} from './game.js';
+import {Courtyard} from './game.js?v=4';
 const $=id=>document.getElementById(id),overlay=$('overlay'),canvas=$('game');let game,lastState;
 function show(title,message,label){$('title').textContent=title;$('message').textContent=message;$('start').textContent=label;overlay.hidden=false;}
 function point(event){const r=canvas.getBoundingClientRect();return{x:(event.clientX-r.left)*canvas.width/r.width,y:(event.clientY-r.top)*canvas.height/r.height};}
