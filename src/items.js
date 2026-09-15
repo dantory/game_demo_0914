@@ -1,6 +1,8 @@
 export const SLOTS={weapon:{label:'무기',icon:'⚔'},armor:{label:'갑옷',icon:'♜'},charm:{label:'부적',icon:'◆'}};
 export const RARITIES={common:{label:'일반',color:'#b8b7ae',power:1},magic:{label:'마법',color:'#5aa8e8',power:1.3},rare:{label:'희귀',color:'#e3c151',power:1.7},legendary:{label:'전설',color:'#e8793e',power:2.25}};
 const NAMES={weapon:['녹슨 장검','묘지기의 도끼','잿빛 철퇴','파수꾼의 검'],armor:['해진 사슬갑옷','철벽 흉갑','방랑자의 외투','수호자의 판금'],charm:['금 간 인장','까마귀 부적','핏빛 룬','고대 수호석']};
+const ICONS={weapon:['iron-longsword','gravekeeper-axe','ash-warhammer','royal-flame-sword'],armor:['torn-chainmail','iron-breastplate','wanderer-cloak','royal-plate'],charm:['cracked-seal','raven-talisman','blood-rune','guardian-stone']};
+export const ITEM_ICON_PATHS=Object.values(ICONS).flat().reduce((all,key)=>(all[key]=`assets/items/${key}.png`,all),{});
 const PREFIX={magic:['날카로운','견고한','민첩한'],rare:['기사단의','황혼의','저주받은'],legendary:['잊힌 왕의','불멸자의','심연을 가르는']};
 
 export function createInventory(limit=20){return{version:1,limit,items:[],equipment:{weapon:null,armor:null,charm:null}};}
@@ -10,8 +12,14 @@ export function generateItem({wave=1,boss=false,rng=Math.random,id}={}){
   if(slot==='weapon'){stats.damage=Math.max(1,Math.round((.8+level*.55)*power*roll()));if(rarity!=='common')stats.crit=Math.round((1+level*.7)*power*roll());}
   if(slot==='armor'){stats.armor=Math.max(1,Math.round((.7+level*.45)*power*roll()));stats.health=Math.round((4+level*3.5)*power*roll());}
   if(slot==='charm'){stats.crit=Math.round((1.5+level)*power*roll());stats.speed=Math.round((1+level*.8)*power*roll());if(['rare','legendary'].includes(rarity))stats.damage=1;}
-  const base=NAMES[slot][Math.floor(rng()*NAMES[slot].length)],name=rarity==='common'?base:`${PREFIX[rarity][Math.floor(rng()*PREFIX[rarity].length)]} ${base}`;
-  return{id:id||`loot-${Date.now().toString(36)}-${Math.floor(rng()*1e7).toString(36)}`,slot,rarity,level,name,stats,value:Math.round((5+level*4)*power)};
+  const baseIndex=Math.floor(rng()*NAMES[slot].length),base=NAMES[slot][baseIndex],name=rarity==='common'?base:`${PREFIX[rarity][Math.floor(rng()*PREFIX[rarity].length)]} ${base}`;
+  return{id:id||`loot-${Date.now().toString(36)}-${Math.floor(rng()*1e7).toString(36)}`,slot,rarity,level,name,icon:ICONS[slot][baseIndex],stats,value:Math.round((5+level*4)*power)};
+}
+export function itemIconKey(item){
+  if(item?.icon&&ITEM_ICON_PATHS[item.icon])return item.icon;const name=item?.name||'';
+  if(item?.slot==='weapon')return name.includes('도끼')?'gravekeeper-axe':name.includes('철퇴')?'ash-warhammer':name.includes('파수꾼')?'royal-flame-sword':'iron-longsword';
+  if(item?.slot==='armor')return name.includes('사슬')?'torn-chainmail':name.includes('흉갑')?'iron-breastplate':name.includes('외투')?'wanderer-cloak':'royal-plate';
+  return name.includes('인장')?'cracked-seal':name.includes('까마귀')?'raven-talisman':name.includes('핏빛')?'blood-rune':'guardian-stone';
 }
 export function addItem(inventory,item){if(inventory.items.length>=inventory.limit)return false;inventory.items.push(item);return true;}
 export function equipItem(inventory,itemId){const item=inventory.items.find(x=>x.id===itemId);if(!item)return false;inventory.equipment[item.slot]=item.id;return true;}
