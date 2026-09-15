@@ -1,10 +1,10 @@
-import {Courtyard} from './game.js?v=7';
+import {Courtyard} from './game.js?v=8';
 const $=id=>document.getElementById(id),overlay=$('overlay'),canvas=$('game');let game,lastState;
 function show(title,message,label){$('title').textContent=title;$('message').textContent=message;$('start').textContent=label;overlay.hidden=false;}
 function point(event){const r=canvas.getBoundingClientRect();return{x:(event.clientX-r.left)*canvas.width/r.width,y:(event.clientY-r.top)*canvas.height/r.height};}
 async function boot(){
  try{
-  const response=await fetch('assets/manifest.json?v=5');if(!response.ok)throw Error('asset manifest');const manifest=await response.json(),images={};
+  const response=await fetch('assets/manifest.json?v=6');if(!response.ok)throw Error('asset manifest');const manifest=await response.json(),images={};
   await Promise.all(Object.entries(manifest).filter(([,v])=>v.src).map(async([key,v])=>{const img=new Image();img.src=v.src;await img.decode();images[key]=img;}));
   game=new Courtyard(canvas,manifest,images,s=>{
    $('health').textContent=`${s.hp} / ${s.maxHp}`;$('healthbar').style.width=`${100*s.hp/s.maxHp}%`;$('score').textContent=`${s.kills} / ${s.total}`;$('wave').textContent=s.wave;$('level').textContent=s.level;$('gold').textContent=s.gold;$('xpbar').style.width=`${100*s.xp/s.xpNext}%`;

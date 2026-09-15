@@ -1,7 +1,7 @@
 {
   "player": {
     "src": "assets/turn.png",
-    "scale": 0.72,
+    "scale": 0.48,
     "animations": {
       "idle_down": {"frames": [{"x": 0, "y": 0, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
       "idle_left": {"frames": [{"x": 1542, "y": 0, "w": 128, "h": 128, "anchorX": 64, "anchorY": 124}]},
