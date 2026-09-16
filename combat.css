@@ -290,7 +290,7 @@
   box-shadow: inset 0 0 14px #000;
 }
 
-.item-list { display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-flow: dense; gap: 3px; }
+.item-list { display: grid; grid-template-columns: repeat(10, 1fr); grid-auto-flow: dense; gap: 2px; }
 
 .item-card, .empty-cell {
   position: relative;
@@ -312,10 +312,10 @@
 
 .item-card.slot-weapon, .item-card.slot-shield, .item-card.slot-armor { grid-row: auto; grid-column: auto; }
 .item-card::before { content: ""; position: absolute; z-index: 1; inset: 2px; pointer-events: none; border: 1px solid #ffffff0d; box-shadow: inset 0 0 7px #000b; }
-.item-card img { position: absolute; inset: 10px 10px 15px; display: block; width: calc(100% - 20px); height: calc(100% - 25px); object-fit: contain; object-position: center; filter: drop-shadow(0 3px 3px #000); }
+.item-card img { position: absolute; inset: 6px 6px 10px; display: block; width: calc(100% - 12px); height: calc(100% - 16px); object-fit: contain; object-position: center; filter: drop-shadow(0 2px 2px #000); }
 .item-card:hover, .item-card.selected { z-index: 2; outline: 2px solid #d33b57; outline-offset: -3px; filter: brightness(1.18); }
-.item-card em { position: absolute; z-index: 3; right: 4px; bottom: 4px; min-width: 30px; padding: 2px 4px; color: #ded4cc; border: 1px solid #ffffff1c; border-radius: 2px; background: #06070bf2; font: 700 8px monospace; font-style: normal; line-height: 1; text-align: center; }
-.item-card.equipped::after { content: "E"; position: absolute; z-index: 3; top: 4px; left: 4px; width: 16px; height: 16px; color: #ffe2e7; border: 1px solid #c45a6d; border-radius: 50%; background: #791a2d; box-shadow: 0 2px 5px #000; font: 900 8px/15px monospace; text-align: center; }
+.item-card em { position: absolute; z-index: 3; right: 2px; bottom: 2px; min-width: 22px; padding: 1px 3px; color: #ded4cc; border: 1px solid #ffffff1c; border-radius: 2px; background: #06070bf2; font: 700 6px monospace; font-style: normal; line-height: 1; text-align: center; }
+.item-card.equipped::after { content: "E"; position: absolute; z-index: 3; top: 2px; left: 2px; width: 12px; height: 12px; color: #ffe2e7; border: 1px solid #c45a6d; border-radius: 50%; background: #791a2d; box-shadow: 0 1px 3px #000; font: 900 7px/11px monospace; text-align: center; }
 
 .stash-tabs { height: 27px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4px; }
 .stash-tabs button { color: #b9a298; border: 1px solid #792237; background: linear-gradient(#501122, #250a11); font: 700 7px Georgia, serif; }
@@ -387,6 +387,7 @@
   .item-detail { width: auto; min-height: 156px; margin-top: 8px; grid-template-columns: 68px 1fr; }
   .item-preview { width: 66px; height: 94px; }
   .stash { margin-top: 10px; }
+  .item-list { grid-template-columns: repeat(5, 1fr); gap: 3px; }
   .inventory-help { min-height: 0; }
 }
 
