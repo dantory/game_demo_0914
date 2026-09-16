@@ -114,8 +114,8 @@
   position: absolute;
   z-index: 6;
   inset: 0 0 0 auto;
-  width: min(460px, 48vw);
-  overflow: visible;
+  width: min(820px, calc(100% - 18px));
+  overflow: auto;
   color: #d2c4b6;
   border-left: 1px solid #82655d;
   background:
@@ -172,9 +172,11 @@
 #close-bag:hover { border-color: #b95769; color: #fff0e3; }
 #close-bag:focus-visible, .equip-slot:focus-visible, .item-card:focus-visible, .item-actions button:focus-visible { outline: 2px solid #cf9e62; outline-offset: 1px; }
 
-.inventory-body { position: relative; padding: 10px 11px 0; }
+.inventory-body { position: relative; display: grid; grid-template-columns: minmax(310px, 350px) minmax(360px, 1fr); gap: 10px; padding: 10px 11px 0; }
+.equipment-column { min-width: 0; }
 
 .loadout {
+  min-width: 0;
   height: 286px;
   padding: 8px 10px 6px;
   border: 1px solid #741a2e;
@@ -196,25 +198,28 @@
     radial-gradient(ellipse at center, #721d2a59, transparent 58%);
 }
 
+.paperdoll::before { content: ""; position: absolute; z-index: 0; left: 50%; bottom: 15px; width: 146px; height: 34px; margin-left: -73px; border: 1px solid #8d334144; border-radius: 50%; background: radial-gradient(ellipse, #bd53694d, transparent 68%); box-shadow: 0 0 30px #9b263744; }
+.paperdoll::after { content: "IRON VANGUARD"; position: absolute; z-index: 1; right: 66px; bottom: 4px; left: 66px; color: #bd9685; font: 700 6px monospace; letter-spacing: 1.3px; text-align: center; }
+
 .hero-portrait {
   position: absolute;
-  z-index: 0;
-  top: 9px;
+  z-index: 1;
+  top: auto;
+  bottom: 18px;
   left: 50%;
-  width: 132px;
-  height: 214px;
-  margin-left: -66px;
-  opacity: .72;
-  border: 1px solid #421923;
-  border-radius: 40% 40% 18% 18%;
-  background:
-    linear-gradient(90deg, transparent 47%, #7727362b 48% 52%, transparent 53%),
-    radial-gradient(circle at 50% 18%, #83263834 0 18px, transparent 19px),
-    linear-gradient(140deg, transparent 20%, #6d1e2d2c 21% 78%, transparent 79%);
+  width: 128px;
+  height: 128px;
+  margin-left: -64px;
+  opacity: 1;
+  border: 0;
+  background: url("assets/walk.png") 0 0 / 1927px 257px no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 13px 11px #000) drop-shadow(0 0 12px #9d354858);
+  transform: scale(1.48);
+  transform-origin: center bottom;
 }
 
-.hero-portrait::before { content: ""; position: absolute; top: 15px; left: 48px; width: 34px; height: 34px; border: 1px solid #652535; border-radius: 50%; }
-.hero-portrait::after { content: ""; position: absolute; top: 58px; left: 34px; width: 62px; height: 92px; border: 1px solid #652535; border-radius: 18px 18px 9px 9px; }
+.hero-portrait::before, .hero-portrait::after { display: none; }
 
 .equip-slot {
   position: relative;
@@ -245,10 +250,12 @@
 .equip-slot.weapon { grid-column: 3; grid-row: 4; }
 .equip-slot.shield { grid-column: 3; grid-row: 5; }
 .equip-slot::after { content: attr(data-label); position: absolute; right: 2px; bottom: 2px; left: 2px; overflow: hidden; padding: 2px 1px; color: #b89a90; background: linear-gradient(90deg, transparent, #07080cda 22% 78%, transparent); font: 700 6px monospace; text-align: center; white-space: nowrap; opacity: .78; }
+.equip-slot.filled::after { opacity: 0; }
 .equip-slot small { position: absolute; z-index: 2; top: 2px; left: 3px; color: #dec18a; font: 700 7px monospace; }
 .equip-slot strong { display: none; }
 
 .gear-icon { width: 100%; height: 100%; display: grid; place-items: center; padding-bottom: 9px; font-size: 15px; }
+.equip-slot.filled .gear-icon { padding-bottom: 0; }
 .gear-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 5px #000); }
 
 .bag-stats {
@@ -265,7 +272,7 @@
 }
 
 .bag-stats b { color: #c3937d; }
-.stash { padding-top: 8px; }
+.stash { min-width: 0; padding-top: 0; }
 
 .stash-head { height: 26px; display: flex; align-items: center; gap: 8px; }
 .stash-head strong { color: #b79b8b; font: 700 9px Georgia, serif; letter-spacing: 1.2px; }
@@ -273,7 +280,7 @@
 .stash-head span { color: #a68a7c; font: 700 7px monospace; }
 
 .grid-frame {
-  height: 168px;
+  height: 234px;
   padding: 3px;
   overflow: hidden;
   border: 1px solid #632336;
@@ -281,7 +288,7 @@
   box-shadow: inset 0 0 14px #000;
 }
 
-.item-list { display: grid; grid-template-columns: repeat(10, 1fr); grid-auto-rows: 30px; grid-auto-flow: dense; gap: 2px; }
+.item-list { display: grid; grid-template-columns: repeat(10, 1fr); grid-auto-rows: 43px; grid-auto-flow: dense; gap: 2px; }
 
 .item-card, .empty-cell {
   position: relative;
@@ -300,8 +307,7 @@
   background: radial-gradient(circle, color-mix(in srgb, var(--rarity) 18%, #121015), #0a0b0e 70%);
 }
 
-.item-card.slot-weapon, .item-card.slot-shield { grid-row: span 2; }
-.item-card.slot-armor { grid-row: span 2; grid-column: span 2; }
+.item-card.slot-weapon, .item-card.slot-shield, .item-card.slot-armor { grid-row: auto; grid-column: auto; }
 .item-card img { width: 93%; height: 93%; object-fit: contain; filter: drop-shadow(0 3px 3px #000); }
 .item-card:hover, .item-card.selected { z-index: 2; outline: 2px solid #d33b57; outline-offset: -3px; filter: brightness(1.18); }
 .item-card em { position: absolute; right: 2px; bottom: 1px; color: #d9cbc0; background: #08090be8; font: 700 7px monospace; font-style: normal; }
@@ -312,17 +318,16 @@
 .stash-tabs .active { color: #ead5c8; background: linear-gradient(#8b1b35, #4d0e1d); }
 
 .item-detail {
-  position: absolute;
-  z-index: 7;
-  top: 90px;
-  right: calc(100% + 12px);
-  width: 360px;
-  min-height: 224px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 216px;
   display: grid;
   grid-template-columns: 82px 1fr;
   grid-template-rows: auto 1fr auto;
   gap: 9px 13px;
   padding: 15px;
+  margin-top: 10px;
   color: #c3b5aa;
   border: 1px solid #78635e;
   background: #050507f5;
@@ -366,16 +371,18 @@
   .skills { right: 10px; bottom: 20px; left: auto; gap: 5px; transform: none; }
   .skill-slot { width: 50px; height: 50px; font-size: 21px; }
   .skill-slot strong { bottom: -13px; font-size: 6px; }
-  #inventory { width: min(430px, 100%); }
-  .item-detail { right: auto; left: 10px; width: min(350px, calc(100vw - 460px)); }
+  #inventory { width: 100%; }
+  .inventory-body { grid-template-columns: minmax(280px, 330px) minmax(330px, 1fr); }
 }
 
 @media (max-width: 720px) {
   .skills .locked { display: none; }
   .xp > div { right: 72px; }
-  #inventory { width: min(430px, 100%); overflow: auto; }
-  .item-detail { position: relative; top: auto; right: auto; left: auto; width: auto; min-height: 156px; margin: 8px 11px; grid-template-columns: 68px 1fr; }
+  #inventory { position: fixed; z-index: 30; inset: 0; width: 100%; height: 100dvh; overflow-x: hidden; overflow-y: auto; border-left: 0; }
+  .inventory-body { display: block; }
+  .item-detail { width: auto; min-height: 156px; margin-top: 8px; grid-template-columns: 68px 1fr; }
   .item-preview { width: 66px; height: 94px; }
+  .stash { margin-top: 10px; }
   .inventory-help { min-height: 0; }
 }
 
@@ -387,8 +394,11 @@
   .skill-slot { width: 44px; height: 44px; font-size: 19px; }
   .skill-slot strong { display: none; }
   .inventory-body { padding-inline: 7px; }
+  .equipment-column, .loadout, .stash, .item-detail { min-width: 0; max-width: 100%; }
   .loadout { height: 286px; padding-inline: 6px; }
   .paperdoll { grid-template-columns: 50px minmax(140px, 1fr) 50px; gap-inline: 8px; }
-  .item-list { grid-auto-rows: 27px; gap: 1px; }
-  .grid-frame { height: 150px; }
+  .bag-stats { min-height: 30px; height: auto; gap: 3px 5px; padding: 4px; flex-wrap: wrap; font-size: 6px; }
+  .item-actions button { min-width: 70px; }
+  .item-list { grid-auto-rows: 32px; gap: 1px; }
+  .grid-frame { height: 172px; }
 }
