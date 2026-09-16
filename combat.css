@@ -186,9 +186,9 @@
   position: relative;
   height: 238px;
   display: grid;
-  grid-template-columns: 58px 40px minmax(82px, 1fr) 40px 58px;
-  grid-template-rows: 42px 48px 48px 40px 44px;
-  gap: 4px;
+  grid-template-columns: 54px minmax(148px, 1fr) 54px;
+  grid-template-rows: repeat(5, 43px);
+  gap: 4px 12px;
   align-items: stretch;
   justify-items: stretch;
   background:
@@ -201,9 +201,9 @@
   z-index: 0;
   top: 9px;
   left: 50%;
-  width: 112px;
+  width: 132px;
   height: 214px;
-  margin-left: -56px;
+  margin-left: -66px;
   opacity: .72;
   border: 1px solid #421923;
   border-radius: 40% 40% 18% 18%;
@@ -213,8 +213,8 @@
     linear-gradient(140deg, transparent 20%, #6d1e2d2c 21% 78%, transparent 79%);
 }
 
-.hero-portrait::before { content: ""; position: absolute; top: 15px; left: 38px; width: 34px; height: 34px; border: 1px solid #652535; border-radius: 50%; }
-.hero-portrait::after { content: ""; position: absolute; top: 58px; left: 24px; width: 62px; height: 92px; border: 1px solid #652535; border-radius: 18px 18px 9px 9px; }
+.hero-portrait::before { content: ""; position: absolute; top: 15px; left: 48px; width: 34px; height: 34px; border: 1px solid #652535; border-radius: 50%; }
+.hero-portrait::after { content: ""; position: absolute; top: 58px; left: 34px; width: 62px; height: 92px; border: 1px solid #652535; border-radius: 18px 18px 9px 9px; }
 
 .equip-slot {
   position: relative;
@@ -234,16 +234,16 @@
 }
 
 .equip-slot:hover { z-index: 3; border-color: #af465b; filter: brightness(1.16); transform: translateY(-1px); }
-.equip-slot.weapon { grid-column: 1; grid-row: 1 / 4; }
-.equip-slot.shield { grid-column: 5; grid-row: 1 / 4; }
-.equip-slot.amulet { grid-column: 2; grid-row: 1; }
-.equip-slot.helmet { grid-column: 4; grid-row: 1; }
-.equip-slot.gloves { grid-column: 2; grid-row: 2; }
-.equip-slot.armor { grid-column: 4; grid-row: 2 / 4; }
-.equip-slot.ring { grid-column: 2; grid-row: 4; }
-.equip-slot.belt { grid-column: 4; grid-row: 4; }
-.equip-slot.charm { grid-column: 2; grid-row: 5; }
-.equip-slot.boots { grid-column: 4; grid-row: 5; }
+.equip-slot.helmet { grid-column: 1; grid-row: 1; }
+.equip-slot.armor { grid-column: 1; grid-row: 2; }
+.equip-slot.gloves { grid-column: 1; grid-row: 3; }
+.equip-slot.belt { grid-column: 1; grid-row: 4; }
+.equip-slot.boots { grid-column: 1; grid-row: 5; }
+.equip-slot.amulet { grid-column: 3; grid-row: 1; }
+.equip-slot.ring { grid-column: 3; grid-row: 2; }
+.equip-slot.charm { grid-column: 3; grid-row: 3; }
+.equip-slot.weapon { grid-column: 3; grid-row: 4; }
+.equip-slot.shield { grid-column: 3; grid-row: 5; }
 .equip-slot::after { content: attr(data-label); position: absolute; right: 2px; bottom: 2px; left: 2px; overflow: hidden; padding: 2px 1px; color: #b89a90; background: linear-gradient(90deg, transparent, #07080cda 22% 78%, transparent); font: 700 6px monospace; text-align: center; white-space: nowrap; opacity: .78; }
 .equip-slot small { position: absolute; z-index: 2; top: 2px; left: 3px; color: #dec18a; font: 700 7px monospace; }
 .equip-slot strong { display: none; }
@@ -388,7 +388,7 @@
   .skill-slot strong { display: none; }
   .inventory-body { padding-inline: 7px; }
   .loadout { height: 286px; padding-inline: 6px; }
-  .paperdoll { grid-template-columns: 52px 36px minmax(72px, 1fr) 36px 52px; }
+  .paperdoll { grid-template-columns: 50px minmax(140px, 1fr) 50px; gap-inline: 8px; }
   .item-list { grid-auto-rows: 27px; gap: 1px; }
   .grid-frame { height: 150px; }
 }
