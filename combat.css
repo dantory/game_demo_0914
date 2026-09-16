@@ -175,8 +175,8 @@
 .inventory-body { position: relative; padding: 10px 11px 0; }
 
 .loadout {
-  height: 216px;
-  padding: 6px;
+  height: 286px;
+  padding: 8px 10px 6px;
   border: 1px solid #741a2e;
   background: linear-gradient(#210b11d9, #13090de8), radial-gradient(circle, #6b1922, #13090d 68%);
   box-shadow: inset 0 0 0 2px #09090b, inset 0 0 0 3px #7e1b31;
@@ -184,19 +184,26 @@
 
 .paperdoll {
   position: relative;
-  height: 170px;
+  height: 238px;
+  display: grid;
+  grid-template-columns: 58px 40px minmax(82px, 1fr) 40px 58px;
+  grid-template-rows: 42px 48px 48px 40px 44px;
+  gap: 4px;
+  align-items: stretch;
+  justify-items: stretch;
   background:
     linear-gradient(90deg, transparent 49.7%, #9b344329 50%, transparent 50.3%),
-    radial-gradient(ellipse at center, #721d2a59, transparent 57%);
+    radial-gradient(ellipse at center, #721d2a59, transparent 58%);
 }
 
 .hero-portrait {
   position: absolute;
-  top: 8px;
+  z-index: 0;
+  top: 9px;
   left: 50%;
-  width: 86px;
-  height: 151px;
-  margin-left: -43px;
+  width: 112px;
+  height: 214px;
+  margin-left: -56px;
   opacity: .72;
   border: 1px solid #421923;
   border-radius: 40% 40% 18% 18%;
@@ -206,12 +213,15 @@
     linear-gradient(140deg, transparent 20%, #6d1e2d2c 21% 78%, transparent 79%);
 }
 
-.hero-portrait::before { content: ""; position: absolute; top: 7px; left: 25px; width: 32px; height: 32px; border: 1px solid #652535; border-radius: 50%; }
-.hero-portrait::after { content: ""; position: absolute; top: 45px; left: 14px; width: 54px; height: 74px; border: 1px solid #652535; border-radius: 16px 16px 8px 8px; }
+.hero-portrait::before { content: ""; position: absolute; top: 15px; left: 38px; width: 34px; height: 34px; border: 1px solid #652535; border-radius: 50%; }
+.hero-portrait::after { content: ""; position: absolute; top: 58px; left: 24px; width: 62px; height: 92px; border: 1px solid #652535; border-radius: 18px 18px 9px 9px; }
 
 .equip-slot {
-  position: absolute;
+  position: relative;
   z-index: 2;
+  width: auto;
+  height: auto;
+  min-width: 0;
   display: grid;
   place-items: center;
   padding: 3px;
@@ -224,20 +234,21 @@
 }
 
 .equip-slot:hover { z-index: 3; border-color: #af465b; filter: brightness(1.16); transform: translateY(-1px); }
-.equip-slot.weapon { right: 13px; top: 43px; width: 62px; height: 94px; }
-.equip-slot.shield { left: 13px; top: 43px; width: 62px; height: 94px; }
-.equip-slot.helmet { left: 50%; top: 0; width: 35px; height: 35px; margin-left: -18px; }
-.equip-slot.armor { left: 50%; top: 41px; width: 58px; height: 66px; margin-left: -29px; }
-.equip-slot.gloves { left: 125px; top: 58px; width: 33px; height: 41px; }
-.equip-slot.boots { left: 50%; bottom: 0; width: 34px; height: 34px; margin-left: -17px; }
-.equip-slot.belt { left: 50%; top: 109px; width: 52px; height: 25px; margin-left: -26px; }
-.equip-slot.amulet { right: 88px; top: 1px; width: 34px; height: 34px; }
-.equip-slot.ring { left: 88px; top: 1px; width: 34px; height: 34px; }
-.equip-slot.charm { left: 22px; top: 1px; width: 34px; height: 34px; }
-.equip-slot small { position: absolute; top: -12px; color: #b7837f; font: 700 7px monospace; }
+.equip-slot.weapon { grid-column: 1; grid-row: 1 / 4; }
+.equip-slot.shield { grid-column: 5; grid-row: 1 / 4; }
+.equip-slot.amulet { grid-column: 2; grid-row: 1; }
+.equip-slot.helmet { grid-column: 4; grid-row: 1; }
+.equip-slot.gloves { grid-column: 2; grid-row: 2; }
+.equip-slot.armor { grid-column: 4; grid-row: 2 / 4; }
+.equip-slot.ring { grid-column: 2; grid-row: 4; }
+.equip-slot.belt { grid-column: 4; grid-row: 4; }
+.equip-slot.charm { grid-column: 2; grid-row: 5; }
+.equip-slot.boots { grid-column: 4; grid-row: 5; }
+.equip-slot::after { content: attr(data-label); position: absolute; right: 2px; bottom: 2px; left: 2px; overflow: hidden; padding: 2px 1px; color: #b89a90; background: linear-gradient(90deg, transparent, #07080cda 22% 78%, transparent); font: 700 6px monospace; text-align: center; white-space: nowrap; opacity: .78; }
+.equip-slot small { position: absolute; z-index: 2; top: 2px; left: 3px; color: #dec18a; font: 700 7px monospace; }
 .equip-slot strong { display: none; }
 
-.gear-icon { width: 100%; height: 100%; display: grid; place-items: center; font-size: 15px; }
+.gear-icon { width: 100%; height: 100%; display: grid; place-items: center; padding-bottom: 9px; font-size: 15px; }
 .gear-icon img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 3px 5px #000); }
 
 .bag-stats {
@@ -376,8 +387,8 @@
   .skill-slot { width: 44px; height: 44px; font-size: 19px; }
   .skill-slot strong { display: none; }
   .inventory-body { padding-inline: 7px; }
-  .loadout { height: 206px; }
-  .paperdoll { transform: scale(.93); transform-origin: top center; }
+  .loadout { height: 286px; padding-inline: 6px; }
+  .paperdoll { grid-template-columns: 52px 36px minmax(72px, 1fr) 36px 52px; }
   .item-list { grid-auto-rows: 27px; gap: 1px; }
   .grid-frame { height: 150px; }
 }
