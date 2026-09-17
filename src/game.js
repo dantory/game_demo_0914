@@ -1,5 +1,5 @@
 // Fast top-down ARPG runtime. Sprite frame data lives in assets/manifest.json.
-import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,saveInventory,unequipSlot} from './items.js?v=4';
+import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,saveInventory,sortInventory,unequipSlot} from './items.js?v=5';
 export class Courtyard {
   constructor(canvas, manifest, images, onState) {
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.art=manifest;this.images=images;this.onState=onState;
@@ -39,6 +39,7 @@ export class Courtyard {
   equip(itemId){if(!equipItem(this.inventory,itemId))return false;this.recalculateStats();saveInventory(this.inventory);return true;}
   unequip(slot){if(!unequipSlot(this.inventory,slot))return false;this.recalculateStats();saveInventory(this.inventory);return true;}
   discard(itemId){if(!discardItem(this.inventory,itemId))return false;saveInventory(this.inventory);return true;}
+  sortInventory(){sortInventory(this.inventory);saveInventory(this.inventory);return true;}
   blocked(x,y,r){if(x<48+r||y<48+r||x>this.world.w-48-r||y>this.world.h-48-r)return true;return this.walls.some(w=>Math.hypot(x-Math.max(w.x,Math.min(x,w.x+w.w)),y-Math.max(w.y,Math.min(y,w.y+w.h)))<r);}
   move(body,dx,dy){if(!this.blocked(body.x+dx,body.y,body.r))body.x+=dx;if(!this.blocked(body.x,body.y+dy,body.r))body.y+=dy;}
   burst(x,y,color,count=10,speed=70){for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2;this.particles.push({x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,life:.45,size:i%3?3:5,color});}}

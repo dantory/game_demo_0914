@@ -29,10 +29,13 @@ export function itemIconKey(item){
   if(item?.slot==='armor')return name.includes('사슬')?'torn-chainmail':name.includes('흉갑')?'iron-breastplate':name.includes('외투')?'wanderer-cloak':'royal-plate';
   return name.includes('인장')?'cracked-seal':name.includes('까마귀')?'raven-talisman':name.includes('핏빛')?'blood-rune':'guardian-stone';
 }
-export function addItem(inventory,item){if(inventory.items.length>=inventory.limit)return false;inventory.items.push(item);return true;}
+export function equippedIds(inventory){return new Set(Object.values(inventory.equipment).filter(Boolean));}
+export function carriedItems(inventory){const equipped=equippedIds(inventory);return inventory.items.filter(item=>!equipped.has(item.id));}
+export function addItem(inventory,item){if(carriedItems(inventory).length>=inventory.limit)return false;inventory.items.push(item);return true;}
 export function equipItem(inventory,itemId){const item=inventory.items.find(x=>x.id===itemId);if(!item)return false;inventory.equipment[item.slot]=item.id;return true;}
-export function unequipSlot(inventory,slot){if(!(slot in inventory.equipment))return false;inventory.equipment[slot]=null;return true;}
+export function unequipSlot(inventory,slot){if(!(slot in inventory.equipment)||!inventory.equipment[slot]||carriedItems(inventory).length>=inventory.limit)return false;inventory.equipment[slot]=null;return true;}
 export function discardItem(inventory,itemId){if(Object.values(inventory.equipment).includes(itemId))return false;const i=inventory.items.findIndex(x=>x.id===itemId);if(i<0)return false;inventory.items.splice(i,1);return true;}
+export function sortInventory(inventory){const slots=Object.keys(SLOTS),rarity={legendary:0,rare:1,magic:2,common:3};inventory.items.sort((a,b)=>slots.indexOf(a.slot)-slots.indexOf(b.slot)||(rarity[a.rarity]??9)-(rarity[b.rarity]??9)||(b.level||0)-(a.level||0)||a.name.localeCompare(b.name,'ko'));return true;}
 export function bonuses(inventory){const total={damage:0,armor:0,health:0,crit:0,speed:0};for(const id of Object.values(inventory.equipment)){const item=inventory.items.find(x=>x.id===id);if(item)for(const [key,value] of Object.entries(item.stats))total[key]=(total[key]||0)+value;}return total;}
 export function saveInventory(inventory,storage=globalThis.localStorage){try{storage?.setItem('ashen-siege-inventory-v1',JSON.stringify(inventory));return true;}catch{return false;}}
 export function loadInventory(storage=globalThis.localStorage){try{const data=JSON.parse(storage?.getItem('ashen-siege-inventory-v1'));if(data?.version===1&&Array.isArray(data.items)&&data.equipment){for(const slot of Object.keys(SLOTS))data.equipment[slot]??=null;return data;}}catch{}return createInventory();}
