@@ -4,6 +4,14 @@ const NAMES={weapon:['녹슨 장검','묘지기의 도끼','잿빛 철퇴','파�
 const ICONS={weapon:['iron-longsword','gravekeeper-axe','ash-warhammer','royal-flame-sword'],shield:['steel-shield'],helmet:['knight-helmet'],armor:['torn-chainmail','iron-breastplate','wanderer-cloak','royal-plate'],gloves:['armored-gloves'],boots:['plated-boots'],belt:['utility-belt'],amulet:['ruby-amulet'],ring:['gold-ring'],charm:['cracked-seal','raven-talisman','blood-rune','guardian-stone']};
 export const ITEM_ICON_PATHS=Object.values(ICONS).flat().reduce((all,key)=>(all[key]=`assets/items/${key}.png`,all),{});
 const PREFIX={magic:['날카로운','견고한','민첩한'],rare:['기사단의','황혼의','저주받은'],legendary:['잊힌 왕의','불멸자의','심연을 가르는']};
+const STAT_KEYS=new Set(['damage','armor','health','crit','speed']);
+
+function normalizeItem(item){
+  if(!item||typeof item.id!=='string'||!item.id||!SLOTS[item.slot]||!RARITIES[item.rarity]||typeof item.name!=='string'||!item.name||!Number.isFinite(item.level)||item.level<1||!item.stats||typeof item.stats!=='object')return null;
+  const stats={};for(const [key,value] of Object.entries(item.stats)){if(!STAT_KEYS.has(key)||!Number.isFinite(value)||value<0)return null;stats[key]=value;}
+  if(!Object.keys(stats).length)return null;
+  return{id:item.id,slot:item.slot,rarity:item.rarity,level:Math.floor(item.level),name:item.name,icon:ITEM_ICON_PATHS[item.icon]?item.icon:undefined,stats,value:Number.isFinite(item.value)?Math.max(0,Math.floor(item.value)):0};
+}
 
 export function createInventory(limit=20){return{version:1,limit,items:[],equipment:Object.fromEntries(Object.keys(SLOTS).map(slot=>[slot,null]))};}
 function rarityFor(wave,boss,rng){if(boss)return rng()<.35?'legendary':'rare';const n=rng(),legend=.005*wave,rare=.05+.025*wave,magic=.25+.04*wave;return n<legend?'legendary':n<legend+rare?'rare':n<legend+rare+magic?'magic':'common';}
@@ -31,11 +39,11 @@ export function itemIconKey(item){
 }
 export function equippedIds(inventory){return new Set(Object.values(inventory.equipment).filter(Boolean));}
 export function carriedItems(inventory){const equipped=equippedIds(inventory);return inventory.items.filter(item=>!equipped.has(item.id));}
-export function addItem(inventory,item){if(carriedItems(inventory).length>=inventory.limit)return false;inventory.items.push(item);return true;}
-export function equipItem(inventory,itemId){const item=inventory.items.find(x=>x.id===itemId);if(!item)return false;inventory.equipment[item.slot]=item.id;return true;}
+export function addItem(inventory,item){const normalized=normalizeItem(item);if(!normalized||inventory.items.some(existing=>existing.id===normalized.id)||carriedItems(inventory).length>=inventory.limit)return false;inventory.items.push(normalized);return true;}
+export function equipItem(inventory,itemId){const item=inventory.items.find(x=>x.id===itemId);if(!item||!(item.slot in inventory.equipment))return false;inventory.equipment[item.slot]=item.id;return true;}
 export function unequipSlot(inventory,slot){if(!(slot in inventory.equipment)||!inventory.equipment[slot]||carriedItems(inventory).length>=inventory.limit)return false;inventory.equipment[slot]=null;return true;}
 export function discardItem(inventory,itemId){if(Object.values(inventory.equipment).includes(itemId))return false;const i=inventory.items.findIndex(x=>x.id===itemId);if(i<0)return false;inventory.items.splice(i,1);return true;}
 export function sortInventory(inventory){const slots=Object.keys(SLOTS),rarity={legendary:0,rare:1,magic:2,common:3};inventory.items.sort((a,b)=>slots.indexOf(a.slot)-slots.indexOf(b.slot)||(rarity[a.rarity]??9)-(rarity[b.rarity]??9)||(b.level||0)-(a.level||0)||a.name.localeCompare(b.name,'ko'));return true;}
 export function bonuses(inventory){const total={damage:0,armor:0,health:0,crit:0,speed:0};for(const id of Object.values(inventory.equipment)){const item=inventory.items.find(x=>x.id===id);if(item)for(const [key,value] of Object.entries(item.stats))total[key]=(total[key]||0)+value;}return total;}
 export function saveInventory(inventory,storage=globalThis.localStorage){try{storage?.setItem('ashen-siege-inventory-v1',JSON.stringify(inventory));return true;}catch{return false;}}
-export function loadInventory(storage=globalThis.localStorage){try{const data=JSON.parse(storage?.getItem('ashen-siege-inventory-v1'));if(data?.version===1&&Array.isArray(data.items)&&data.equipment){for(const slot of Object.keys(SLOTS))data.equipment[slot]??=null;return data;}}catch{}return createInventory();}
+export function loadInventory(storage=globalThis.localStorage){try{const data=JSON.parse(storage?.getItem('ashen-siege-inventory-v1'));if(data?.version===1&&Array.isArray(data.items)&&data.equipment&&typeof data.equipment==='object'){const inventory=createInventory(Number.isInteger(data.limit)&&data.limit>0&&data.limit<=100?data.limit:20),seen=new Set();for(const raw of data.items){const item=normalizeItem(raw);if(item&&!seen.has(item.id)){inventory.items.push(item);seen.add(item.id);}}for(const slot of Object.keys(SLOTS)){const id=data.equipment[slot],item=inventory.items.find(candidate=>candidate.id===id);inventory.equipment[slot]=item?.slot===slot?id:null;}const equipped=equippedIds(inventory);let carried=0;inventory.items=inventory.items.filter(item=>equipped.has(item.id)||carried++<inventory.limit);return inventory;}}catch{}return createInventory();}

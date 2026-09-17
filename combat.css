@@ -128,6 +128,7 @@
 }
 
 #inventory[hidden] { display: none; }
+body:has(#inventory:not([hidden])) .touch { display: none !important; }
 
 #inventory::before {
   content: "";
@@ -173,6 +174,9 @@
 
 #close-bag:hover { border-color: #b95769; color: #fff0e3; }
 #close-bag:focus-visible, .equip-slot:focus-visible, .item-card:focus-visible, .item-actions button:focus-visible { outline: 2px solid #cf9e62; outline-offset: 1px; }
+
+#inventory-notice { position: absolute; z-index: 8; top: 55px; left: 50%; width: max-content; max-width: calc(100% - 32px); margin: 0; padding: 8px 13px; color: #f0d5bf; border: 1px solid #955448; background: #2b1715f2; box-shadow: 0 6px 18px #000b; font: 700 9px monospace; text-align: center; transform: translateX(-50%); }
+#inventory-notice[hidden] { display: none; }
 
 .inventory-body { position: relative; min-height: 0; flex: 1; display: grid; grid-template-columns: minmax(360px, 400px) minmax(400px, 1fr); grid-template-rows: auto auto; align-content: start; gap: 12px; padding: 14px 15px 10px; overflow: auto; }
 .equipment-column { display: contents; }
@@ -325,7 +329,7 @@
 .item-card em { position: absolute; z-index: 3; right: 2px; bottom: 2px; min-width: 22px; padding: 1px 3px; color: #ded4cc; border: 1px solid #ffffff1c; border-radius: 2px; background: #06070bf2; font: 700 6px monospace; font-style: normal; line-height: 1; text-align: center; }
 .item-card.equipped::after { content: "E"; position: absolute; z-index: 3; top: 2px; left: 2px; width: 12px; height: 12px; color: #ffe2e7; border: 1px solid #c45a6d; border-radius: 50%; background: #791a2d; box-shadow: 0 1px 3px #000; font: 900 7px/11px monospace; text-align: center; }
 
-.stash-tabs { height: 27px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 4px; }
+.stash-tabs { height: 27px; display: grid; grid-template-columns: 1fr; gap: 2px; margin-top: 4px; }
 .stash-tabs button { color: #8d8679; border: 1px solid #49443a; background: linear-gradient(#17191c, #0d0f12); font: 700 7px Georgia, serif; }
 .stash-tabs .active { color: #eee0bf; border-color: #8c734b; background: linear-gradient(#4e412c, #252117); }
 
@@ -354,6 +358,7 @@
 .item-copy { min-width: 0; }
 .item-detail h4 { margin: 0 0 4px; color: var(--rarity); font: 700 15px Georgia, serif; text-align: left; }
 .item-detail small { display: block; color: #b4a995; font: 700 7px monospace; text-align: left; }
+.item-detail small em { margin-left: 4px; font-style: normal; }
 .comparison { margin: 6px 0 0; overflow: hidden; color: #777b7d; font: 700 7px monospace; text-overflow: ellipsis; white-space: nowrap; }
 .item-detail ul { margin: 7px 0; padding: 6px 0; list-style: none; border-block: 1px solid #393a38; font: 700 9px monospace; }
 .item-detail li { display: grid; grid-template-columns: 1fr auto auto; gap: 7px; padding: 2px 0; color: #7e92c0; }
@@ -395,17 +400,20 @@
   .skills .locked { display: none; }
   .xp > div { right: 72px; }
   #inventory { position: fixed; z-index: 30; inset: 0; width: 100%; max-width: 100vw; height: 100dvh; overflow-x: clip; overflow-y: auto; border-left: 0; background: radial-gradient(circle at 50% 18%, #42251f42, transparent 36%), #090b0e; }
-  body:has(#inventory:not([hidden])) .touch { display: none !important; }
   .inventory-body { width: 100%; min-width: 0; display: flex; flex-direction: column; overflow-x: clip; }
   .equipment-column { display: contents; }
   .loadout { order: 1; min-height: 276px; }
-  .stash { order: 2; margin-top: 0; }
-  .item-detail { order: 3; width: auto; min-width: 0; min-height: 156px; margin-top: 0; grid-template-columns: 68px minmax(0, 1fr); }
+  .item-detail { order: 2; width: auto; min-width: 0; min-height: 156px; margin-top: 0; grid-template-columns: 68px minmax(0, 1fr); }
+  .stash { order: 3; margin-top: 0; }
   .item-preview { width: 66px; height: 94px; }
   .stash, .grid-frame, .item-list { width: 100%; min-width: 0; max-width: 100%; }
   .stash { overflow-x: clip; }
   .item-list { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; }
   .inventory-help { min-height: 0; }
+}
+
+@media (max-height: 500px) and (hover: none) and (pointer: coarse) {
+  #inventory { position: fixed; z-index: 30; inset: 0; width: 100%; max-width: 100vw; height: 100dvh; overflow: auto; background: #090b0e; }
 }
 
 @media (max-width: 520px) {
@@ -421,7 +429,7 @@
   .paperdoll { height: 207px; grid-template-columns: 46px minmax(0, 1fr) 46px; grid-template-rows: repeat(5, 38px); gap: 4px 7px; }
   .paperdoll::after { right: 52px; left: 52px; }
   .hero-portrait { bottom: 17px; transform: scale(1.32); }
-  .bag-stats { min-height: 30px; height: auto; gap: 3px 5px; padding: 4px; flex-wrap: wrap; font-size: 6px; }
+  .bag-stats { min-height: 34px; height: auto; gap: 4px 7px; padding: 5px; flex-wrap: wrap; font-size: 7px; }
   .item-detail { grid-template-columns: 58px minmax(0, 1fr); gap: 8px; padding: 10px; }
   .item-preview { width: 56px; height: 82px; padding: 8px 6px; }
   .item-detail h4 { overflow-wrap: anywhere; font-size: 13px; }
