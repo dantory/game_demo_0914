@@ -3,7 +3,7 @@ import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemI
 export class Courtyard {
   constructor(canvas, manifest, images, onState) {
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.art=manifest;this.images=images;this.onState=onState;
-    this.keys=new Set();this.time=0;this.last=0;this.running=true;this.attackQueued=false;this.attackHeld=false;this.skillQueued=null;
+    this.keys=new Set();this.touchMove={x:0,y:0};this.time=0;this.last=0;this.running=true;this.attackQueued=false;this.attackHeld=false;this.mobileAutoAim=false;this.skillQueued=null;
     this.world={w:1600,h:1088};this.camera={x:0,y:0};this.inventory=loadInventory();
     this.walls=[[6,6],[43,6],[8,27],[41,27],[13,22],[36,22],[12,10],[38,12]].map(([x,y])=>({x:x*32-22,y:y*32-12,w:44,h:28}));
     this.walls.push(...[[15,8],[34,25],[7,18]].map(([x,y])=>({x:x*32-48,y:y*32-25,w:96,h:50})));
@@ -18,7 +18,7 @@ export class Courtyard {
     if(!this.inventory)this.inventory=createInventory();this.gear=bonuses(this.inventory);const maxHp=100+this.gear.health;
     this.player={x:720,y:520,r:11,hp:maxHp,maxHp,face:'down',action:'idle',clock:0,cool:0,inv:0,aimX:720,aimY:620};this.camera={x:240,y:250};
     this.wave=1;this.level=1;this.xp=0;this.xpNext=10;this.gold=0;this.kills=0;this.combo=0;this.comboClock=0;this.state='playing';this.waveDelay=0;
-    this.keys.clear();this.particles=[];this.projectiles=[];this.drops=[];this.texts=[];this.time=0;this.hitStop=0;this.shake=0;this.attackQueued=false;this.attackHeld=false;this.skillQueued=null;this.skillCooldowns={cleave:0};this.spawnWave();
+    this.keys.clear();this.touchMove={x:0,y:0};this.particles=[];this.projectiles=[];this.drops=[];this.texts=[];this.time=0;this.hitStop=0;this.shake=0;this.attackQueued=false;this.attackHeld=false;this.mobileAutoAim=false;this.skillQueued=null;this.skillCooldowns={cleave:0};this.spawnWave();
   }
   spawnWave(){
     const rings=[[1010,510],[1035,390],[1015,700],[785,820],[520,805],[370,650],[360,430],[515,190],[745,165],[1070,210],[1250,510],[1180,820],[880,930],[430,930],[190,750],[180,330],[405,105],[920,95]],count=7+this.wave*3,offset=(this.wave-1)*3,spots=Array.from({length:rings.length},(_,i)=>rings[(i+offset)%rings.length]);
@@ -27,8 +27,11 @@ export class Courtyard {
   }
   setAim(x,y){this.player.aimX=x;this.player.aimY=y;const dx=x-this.player.x,dy=y-this.player.y;if(Math.hypot(dx,dy)>8)this.player.face=Math.abs(dx)>Math.abs(dy)?dx>0?'right':'left':dy>0?'down':'up';}
   setAimScreen(x,y){this.setAim(x+this.camera.x,y+this.camera.y);}
+  setTouchMove(x,y){const length=Math.hypot(x,y);this.touchMove=length>1?{x:x/length,y:y/length}:{x,y};}
+  aimNearestEnemy(){const living=this.enemies.filter(enemy=>enemy.hp>0);if(!living.length)return false;let nearest=living[0],distance=Math.hypot(nearest.x-this.player.x,nearest.y-this.player.y);for(const enemy of living.slice(1)){const candidate=Math.hypot(enemy.x-this.player.x,enemy.y-this.player.y);if(candidate<distance){nearest=enemy;distance=candidate;}}this.setAim(nearest.x,nearest.y);return true;}
   queueAttack(){if(this.state==='playing')this.attackQueued=true;}
   setAttackHeld(value){this.attackHeld=value;if(value)this.queueAttack();}
+  setMobileAttackHeld(value){this.mobileAutoAim=value;if(value)this.aimNearestEnemy();this.setAttackHeld(value);}
   useSkill(name){if(this.state!=='playing'||this.paused||!(name in this.skillCooldowns)||this.skillCooldowns[name]>0)return false;this.skillQueued=name;return true;}
   performCleave(){
     if(this.skillCooldowns.cleave>0)return false;const p=this.player,damage=4+this.level+this.gear.damage;this.skillCooldowns.cleave=4.5;p.action='attack';p.skill='cleave';p.clock=0;p.cool=.5;this.attackQueued=false;let hits=0;
@@ -53,7 +56,7 @@ export class Courtyard {
     if(this.paused)return;if(this.hitStop>0){const freeze=Math.min(dt,this.hitStop);this.hitStop-=freeze;dt-=freeze;if(dt<=0)return;}this.time+=dt;const p=this.player;for(const key of Object.keys(this.skillCooldowns))this.skillCooldowns[key]=Math.max(0,this.skillCooldowns[key]-dt);this.shake=Math.max(0,this.shake-dt*22);this.comboClock=Math.max(0,this.comboClock-dt);if(!this.comboClock)this.combo=0;this.particles=this.particles.filter(a=>(a.life-=dt)>0);for(const a of this.particles){a.x+=a.vx*dt;a.y+=a.vy*dt;a.vx*=.91;a.vy*=.91;}this.texts=this.texts.filter(a=>(a.life-=dt)>0);for(const a of this.texts)a.y-=26*dt;
     this.drops=this.drops.filter(a=>{a.life-=dt;const d=Math.hypot(a.x-p.x,a.y-p.y);if(d<60){a.x+=(p.x-a.x)*dt*7;a.y+=(p.y-a.y)*dt*7;}if(d<18){if(a.type==='item'){if(!addItem(this.inventory,a.item)){a.life=Math.max(a.life,3);return true;}saveInventory(this.inventory);this.floatText(a.x,a.y-18,a.item.name,a.item.rarity==='legendary'?'#e8793e':a.item.rarity==='rare'?'#e3c151':'#77b9ed');this.burst(a.x,a.y,'#e3c151',10,60);return false;}if(a.type==='potion')p.hp=Math.min(p.maxHp,p.hp+12);this.gold+=a.type==='coin'?1:0;this.burst(a.x,a.y,a.type==='potion'?'#d95b63':'#e6c15d',5,35);return false;}return a.life>0;});
     if(this.state!=='playing')return;if(this.waveDelay>0){this.waveDelay-=dt;if(this.waveDelay<=0){this.wave++;this.spawnWave();}return;}if(this.skillQueued){const skill=this.skillQueued;this.skillQueued=null;if(skill==='cleave')this.performCleave();}
-    p.cool=Math.max(0,p.cool-dt);p.inv=Math.max(0,p.inv-dt);p.clock+=dt;const dx=Number(this.keys.has('d'))-Number(this.keys.has('a')),dy=Number(this.keys.has('s'))-Number(this.keys.has('w'));
+    p.cool=Math.max(0,p.cool-dt);p.inv=Math.max(0,p.inv-dt);p.clock+=dt;if(this.mobileAutoAim)this.aimNearestEnemy();let dx=Number(this.keys.has('d'))-Number(this.keys.has('a'))+this.touchMove.x,dy=Number(this.keys.has('s'))-Number(this.keys.has('w'))+this.touchMove.y;const inputLength=Math.hypot(dx,dy);if(inputLength>1){dx/=inputLength;dy/=inputLength;}
     if(p.action==='attack'&&p.clock>(p.skill==='cleave'?.46:.32)){p.action='idle';p.skill=null;p.clock=0;}
     if(p.action!=='attack'){
       const action=dx||dy?'walk':'idle';if(action!==p.action){p.action=action;p.clock=0;}if(dx||dy){const len=Math.hypot(dx,dy),speed=172*(1+this.gear.speed/100);this.move(p,dx/len*speed*dt,dy/len*speed*dt);}this.setAim(p.aimX,p.aimY);
