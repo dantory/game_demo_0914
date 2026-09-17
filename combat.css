@@ -382,16 +382,17 @@
 @media (max-width: 720px) {
   .skills .locked { display: none; }
   .xp > div { right: 72px; }
-  #inventory { position: fixed; z-index: 30; inset: 0; width: 100%; height: 100dvh; overflow-x: hidden; overflow-y: auto; border-left: 0; }
-  .inventory-body { display: block; }
-  .item-detail { width: auto; min-height: 156px; margin-top: 8px; grid-template-columns: 68px 1fr; }
+  #inventory { position: fixed; z-index: 30; inset: 0; width: 100%; max-width: 100vw; height: 100dvh; overflow-x: clip; overflow-y: auto; border-left: 0; }
+  .inventory-body { width: 100%; min-width: 0; display: block; overflow-x: clip; }
+  .item-detail { width: auto; min-width: 0; min-height: 156px; margin-top: 8px; grid-template-columns: 68px minmax(0, 1fr); }
   .item-preview { width: 66px; height: 94px; }
-  .stash { margin-top: 10px; }
-  .item-list { grid-template-columns: repeat(5, 1fr); gap: 3px; }
+  .stash, .grid-frame, .item-list { width: 100%; min-width: 0; max-width: 100%; }
+  .stash { margin-top: 10px; overflow-x: clip; }
+  .item-list { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; }
   .inventory-help { min-height: 0; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .xp { height: 66px; }
   .xp > span { display: none; }
   .xp > div { right: 66px; bottom: 8px; left: 8px; }
@@ -399,13 +400,19 @@
   .skill-slot { width: 44px; height: 44px; font-size: 19px; }
   .skill-slot strong { display: none; }
   .inventory-body { padding-inline: 7px; }
-  .equipment-column, .loadout, .stash, .item-detail { min-width: 0; max-width: 100%; }
+  .equipment-column, .loadout, .paperdoll, .stash, .item-detail { width: 100%; min-width: 0; max-width: 100%; }
   .loadout { height: 286px; padding-inline: 6px; }
-  .paperdoll { grid-template-columns: 50px minmax(140px, 1fr) 50px; gap-inline: 8px; }
+  .paperdoll { grid-template-columns: 46px minmax(0, 1fr) 46px; gap-inline: 6px; }
+  .hero-portrait { transform: scale(1.35); }
   .bag-stats { min-height: 30px; height: auto; gap: 3px 5px; padding: 4px; flex-wrap: wrap; font-size: 6px; }
-  .item-actions button { min-width: 70px; }
+  .item-detail { grid-template-columns: 58px minmax(0, 1fr); gap: 8px; padding: 10px; }
+  .item-preview { width: 56px; height: 82px; padding: 8px 6px; }
+  .item-detail h4 { overflow-wrap: anywhere; font-size: 13px; }
+  .item-actions { gap: 5px; }
+  .item-actions button { min-width: 0; flex: 1; }
   .item-list { gap: 2px; }
   .item-card img { inset: 7px 7px 12px; width: calc(100% - 14px); height: calc(100% - 19px); }
   .item-card em { right: 2px; bottom: 2px; min-width: 25px; padding-inline: 3px; font-size: 7px; }
   .item-card.equipped::after { top: 2px; left: 2px; width: 14px; height: 14px; font-size: 7px; line-height: 13px; }
+  .inventory-help { grid-template-columns: 1fr; gap: 4px; }
 }
