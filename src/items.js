@@ -3,20 +3,34 @@ export const RARITIES={common:{label:'일반',color:'#b8b7ae',power:1},magic:{la
 const NAMES={weapon:['녹슨 장검','묘지기의 도끼','잿빛 철퇴','파수꾼의 검'],shield:['망자의 철제 방패'],helmet:['핏빛 갈기 투구'],armor:['해진 사슬갑옷','철벽 흉갑','방랑자의 외투','수호자의 판금'],gloves:['성채의 건틀릿'],boots:['철기병의 장화'],belt:['용병의 도구 허리띠'],amulet:['핏빛 서약 목걸이'],ring:['왕실 인장 반지'],charm:['금 간 인장','까마귀 부적','핏빛 룬','고대 수호석']};
 const ICONS={weapon:['iron-longsword','gravekeeper-axe','ash-warhammer','royal-flame-sword'],shield:['steel-shield'],helmet:['knight-helmet'],armor:['torn-chainmail','iron-breastplate','wanderer-cloak','royal-plate'],gloves:['armored-gloves'],boots:['plated-boots'],belt:['utility-belt'],amulet:['ruby-amulet'],ring:['gold-ring'],charm:['cracked-seal','raven-talisman','blood-rune','guardian-stone']};
 export const ITEM_ICON_PATHS=Object.values(ICONS).flat().reduce((all,key)=>(all[key]=`assets/items/${key}.png`,all),{});
-const PREFIX={magic:['날카로운','견고한','민첩한'],rare:['기사단의','황혼의','저주받은'],legendary:['잊힌 왕의','불멸자의','심연을 가르는']};
 const STAT_KEYS=new Set(['damage','armor','health','crit','speed']);
+export const LOOT_TABLES={
+  slime:{label:'일반',gold:3,xp:2,equipmentChance:.18,rarityBonus:0,guaranteedItems:0,boss:false},
+  ember:{label:'정예',gold:5,xp:3,equipmentChance:.3,rarityBonus:.06,guaranteedItems:0,boss:false},
+  cultist:{label:'정예',gold:6,xp:3,equipmentChance:.4,rarityBonus:.12,guaranteedItems:0,boss:false},
+  brute:{label:'보스',gold:24,xp:10,equipmentChance:1,rarityBonus:0,guaranteedItems:2,boss:true},
+};
+const AFFIXES=[
+  {id:'assault',position:'prefix',label:'맹공의',stat:'damage',base:1,perLevel:.34},
+  {id:'bulwark',position:'prefix',label:'철벽의',stat:'armor',base:1,perLevel:.3},
+  {id:'vigor',position:'prefix',label:'생명의',stat:'health',base:5,perLevel:2.2},
+  {id:'slaughter',position:'suffix',label:'학살',stat:'crit',base:2,perLevel:.7},
+  {id:'gale',position:'suffix',label:'질풍',stat:'speed',base:2,perLevel:.65},
+];
 
 function normalizeItem(item){
   if(!item||typeof item.id!=='string'||!item.id||!SLOTS[item.slot]||!RARITIES[item.rarity]||typeof item.name!=='string'||!item.name||!Number.isFinite(item.level)||item.level<1||!item.stats||typeof item.stats!=='object')return null;
   const stats={};for(const [key,value] of Object.entries(item.stats)){if(!STAT_KEYS.has(key)||!Number.isFinite(value)||value<0)return null;stats[key]=value;}
   if(!Object.keys(stats).length)return null;
-  return{id:item.id,slot:item.slot,rarity:item.rarity,level:Math.floor(item.level),name:item.name,icon:ITEM_ICON_PATHS[item.icon]?item.icon:undefined,stats,value:Number.isFinite(item.value)?Math.max(0,Math.floor(item.value)):0};
+  const affixes=Array.isArray(item.affixes)?item.affixes.filter(affix=>affix&&typeof affix.id==='string'&&typeof affix.label==='string').slice(0,3).map(({id,label})=>({id,label})):[];
+  return{id:item.id,slot:item.slot,rarity:item.rarity,level:Math.floor(item.level),name:item.name,icon:ITEM_ICON_PATHS[item.icon]?item.icon:undefined,stats,affixes,value:Number.isFinite(item.value)?Math.max(0,Math.floor(item.value)):0};
 }
 
 export function createInventory(limit=20){return{version:1,limit,items:[],equipment:Object.fromEntries(Object.keys(SLOTS).map(slot=>[slot,null]))};}
-function rarityFor(wave,boss,rng){if(boss)return rng()<.35?'legendary':'rare';const n=rng(),legend=.005*wave,rare=.05+.025*wave,magic=.25+.04*wave;return n<legend?'legendary':n<legend+rare?'rare':n<legend+rare+magic?'magic':'common';}
-export function generateItem({wave=1,boss=false,rng=Math.random,id}={}){
-  const slots=Object.keys(SLOTS),slot=slots[Math.floor(rng()*slots.length)],rarity=rarityFor(wave,boss,rng),power=RARITIES[rarity].power,level=Math.max(1,wave),roll=()=>.85+rng()*.3,stats={};
+function rarityFor(wave,boss,rarityBonus,rng){if(boss)return rng()<.35?'legendary':'rare';const n=rng(),legend=.005*wave+rarityBonus*.15,rare=.05+.025*wave+rarityBonus*.45,magic=.25+.04*wave+rarityBonus*.4;return n<legend?'legendary':n<legend+rare?'rare':n<legend+rare+magic?'magic':'common';}
+export function lootProfile(enemyType='slime'){return LOOT_TABLES[enemyType]||LOOT_TABLES.slime;}
+export function generateItem({wave=1,boss=false,source='slime',rng=Math.random,id}={}){
+  const profile=lootProfile(source),slots=Object.keys(SLOTS),slot=slots[Math.floor(rng()*slots.length)],rarity=rarityFor(wave,boss||profile.boss,profile.rarityBonus,rng),power=RARITIES[rarity].power,level=Math.max(1,wave),roll=()=>.85+rng()*.3,stats={};
   if(slot==='weapon'){stats.damage=Math.max(1,Math.round((.8+level*.55)*power*roll()));if(rarity!=='common')stats.crit=Math.round((1+level*.7)*power*roll());}
   if(slot==='armor'){stats.armor=Math.max(1,Math.round((.7+level*.45)*power*roll()));stats.health=Math.round((4+level*3.5)*power*roll());}
   if(slot==='shield'){stats.armor=Math.max(1,Math.round((1+level*.5)*power*roll()));stats.health=Math.round((2+level*2)*power*roll());}
@@ -27,8 +41,10 @@ export function generateItem({wave=1,boss=false,rng=Math.random,id}={}){
   if(slot==='amulet'){stats.damage=Math.max(1,Math.round((.3+level*.25)*power*roll()));stats.crit=Math.round((2+level*.65)*power*roll());}
   if(slot==='ring'){stats.crit=Math.round((2+level*.6)*power*roll());stats.speed=Math.round((1+level*.35)*power*roll());}
   if(slot==='charm'){stats.crit=Math.round((1.5+level)*power*roll());stats.speed=Math.round((1+level*.8)*power*roll());if(['rare','legendary'].includes(rarity))stats.damage=1;}
-  const baseIndex=Math.floor(rng()*NAMES[slot].length),base=NAMES[slot][baseIndex],name=rarity==='common'?base:`${PREFIX[rarity][Math.floor(rng()*PREFIX[rarity].length)]} ${base}`;
-  return{id:id||`loot-${Date.now().toString(36)}-${Math.floor(rng()*1e7).toString(36)}`,slot,rarity,level,name,icon:ICONS[slot][baseIndex],stats,value:Math.round((5+level*4)*power)};
+  const affixCount={common:0,magic:1,rare:2,legendary:3}[rarity],pool=[...AFFIXES],affixes=[];
+  for(let i=0;i<affixCount;i++){const affix=pool.splice(Math.floor(rng()*pool.length),1)[0],amount=Math.max(1,Math.round((affix.base+level*affix.perLevel)*power*roll()));stats[affix.stat]=(stats[affix.stat]||0)+amount;affixes.push({id:affix.id,label:affix.label});}
+  const baseIndex=Math.floor(rng()*NAMES[slot].length),base=NAMES[slot][baseIndex],prefix=affixes.find(affix=>AFFIXES.find(def=>def.id===affix.id)?.position==='prefix'),suffix=affixes.find(affix=>AFFIXES.find(def=>def.id===affix.id)?.position==='suffix'),name=`${prefix?`${prefix.label} `:''}${base}${suffix?` · ${suffix.label}`:''}`;
+  return{id:id||`loot-${Date.now().toString(36)}-${Math.floor(rng()*1e7).toString(36)}`,slot,rarity,level,name,icon:ICONS[slot][baseIndex],stats,affixes,value:Math.round((5+level*4)*power*(1+affixCount*.18))};
 }
 export function itemIconKey(item){
   if(item?.icon&&ITEM_ICON_PATHS[item.icon])return item.icon;const name=item?.name||'';

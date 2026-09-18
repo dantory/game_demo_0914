@@ -343,7 +343,7 @@ body:has(#inventory:not([hidden])) .touch { display: none !important; }
   display: grid;
   grid-template-columns: 82px 1fr;
   grid-template-rows: auto 1fr auto;
-  gap: 9px 13px;
+  gap: 7px 13px;
   padding: 13px;
   margin-top: 0;
   color: #c3b5aa;
@@ -359,6 +359,7 @@ body:has(#inventory:not([hidden])) .touch { display: none !important; }
 .item-detail h4 { margin: 0 0 4px; color: var(--rarity); font: 700 15px Georgia, serif; text-align: left; }
 .item-detail small { display: block; color: #b4a995; font: 700 7px monospace; text-align: left; }
 .item-detail small em { margin-left: 4px; font-style: normal; }
+.item-detail small .affixes { color: #c8a56a; }
 .comparison { margin: 6px 0 0; overflow: hidden; color: #777b7d; font: 700 7px monospace; text-overflow: ellipsis; white-space: nowrap; }
 .item-detail ul { margin: 7px 0; padding: 6px 0; list-style: none; border-block: 1px solid #393a38; font: 700 9px monospace; }
 .item-detail li { display: grid; grid-template-columns: 1fr auto auto; gap: 7px; padding: 2px 0; color: #7e92c0; }

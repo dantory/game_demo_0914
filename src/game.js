@@ -1,5 +1,5 @@
 // Fast top-down ARPG runtime. Sprite frame data lives in assets/manifest.json.
-import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,saveInventory,sortInventory,unequipSlot} from './items.js?v=6';
+import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,loadInventory,lootProfile,saveInventory,sortInventory,unequipSlot} from './items.js?v=7';
 export class Courtyard {
   constructor(canvas, manifest, images, onState) {
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.art=manifest;this.images=images;this.onState=onState;
@@ -18,7 +18,7 @@ export class Courtyard {
     if(!this.inventory)this.inventory=createInventory();this.gear=bonuses(this.inventory);const maxHp=100+this.gear.health;
     this.player={x:720,y:520,r:11,hp:maxHp,maxHp,face:'down',action:'idle',clock:0,cool:0,inv:0,aimX:720,aimY:620};this.camera={x:240,y:250};
     this.wave=1;this.level=1;this.xp=0;this.xpNext=10;this.gold=0;this.kills=0;this.combo=0;this.comboClock=0;this.state='playing';this.waveDelay=0;
-    this.keys.clear();this.touchMove={x:0,y:0};this.particles=[];this.projectiles=[];this.drops=[];this.texts=[];this.time=0;this.hitStop=0;this.shake=0;this.attackQueued=false;this.attackHeld=false;this.mobileAutoAim=false;this.skillQueued=null;this.skillCooldowns={cleave:0};this.spawnWave();
+    this.random??=Math.random;this.lootSerial=0;this.keys.clear();this.touchMove={x:0,y:0};this.particles=[];this.projectiles=[];this.drops=[];this.texts=[];this.time=0;this.hitStop=0;this.shake=0;this.attackQueued=false;this.attackHeld=false;this.mobileAutoAim=false;this.skillQueued=null;this.skillCooldowns={cleave:0};this.spawnWave();
   }
   spawnWave(){
     const rings=[[1010,510],[1035,390],[1015,700],[785,820],[520,805],[370,650],[360,430],[515,190],[745,165],[1070,210],[1250,510],[1180,820],[880,930],[430,930],[190,750],[180,330],[405,105],[920,95]],count=7+this.wave*3,offset=(this.wave-1)*3,spots=Array.from({length:rings.length},(_,i)=>rings[(i+offset)%rings.length]);
@@ -48,8 +48,8 @@ export class Courtyard {
   burst(x,y,color,count=10,speed=70){for(let i=0;i<count;i++){const a=Math.random()*Math.PI*2;this.particles.push({x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,life:.45,size:i%3?3:5,color});}}
   floatText(x,y,text,color='#fff'){this.texts.push({x,y,text,color,life:.7});}
   gainReward(enemy){
-    const boss=enemy.type==='brute';this.kills++;this.waveKills++;this.combo++;this.comboClock=2.2;this.gold+=boss?24:3+this.wave;this.xp+=boss?8:2;this.drops.push({x:enemy.x,y:enemy.y,life:3,type:boss?'ruby':this.kills%4===0?'potion':'coin'});
-    if(boss||this.kills===1||Math.random()<.24+this.wave*.07){const item=generateItem({wave:this.wave,boss});this.drops.push({x:enemy.x+10,y:enemy.y-4,life:60,type:'item',item});}
+    const profile=lootProfile(enemy.type),boss=profile.boss;this.kills++;this.waveKills++;this.combo++;this.comboClock=2.2;this.gold+=profile.gold;this.xp+=profile.xp;this.drops.push({x:enemy.x,y:enemy.y,life:3,type:boss?'ruby':this.kills%4===0?'potion':'coin'});
+    const itemCount=profile.guaranteedItems||(this.kills===1||this.random()<profile.equipmentChance?1:0);for(let i=0;i<itemCount;i++){const item=generateItem({wave:this.wave,boss,source:enemy.type,rng:this.random,id:`loot-${Date.now().toString(36)}-${this.lootSerial++}`});this.drops.push({x:enemy.x+10+i*18,y:enemy.y-4-i*3,life:60,type:'item',item});}
     while(this.xp>=this.xpNext){this.xp-=this.xpNext;this.level++;this.xpNext+=4;this.recalculateStats();this.player.hp=Math.min(this.player.maxHp,this.player.hp+28);this.burst(this.player.x,this.player.y,'#e6cb69',22,105);}
   }
   update(dt){
