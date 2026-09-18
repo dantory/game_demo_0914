@@ -53,6 +53,7 @@ export function itemIconKey(item){
   if(item?.slot==='armor')return name.includes('사슬')?'torn-chainmail':name.includes('흉갑')?'iron-breastplate':name.includes('외투')?'wanderer-cloak':'royal-plate';
   return name.includes('인장')?'cracked-seal':name.includes('까마귀')?'raven-talisman':name.includes('핏빛')?'blood-rune':'guardian-stone';
 }
+export function itemPower(item){return item?Math.round(item.level*8+(item.stats.damage||0)*5+(item.stats.armor||0)*4+(item.stats.health||0)*.3+(item.stats.crit||0)*1.5+(item.stats.speed||0)):0;}
 export function equippedIds(inventory){return new Set(Object.values(inventory.equipment).filter(Boolean));}
 export function carriedItems(inventory){const equipped=equippedIds(inventory);return inventory.items.filter(item=>!equipped.has(item.id));}
 export function addItem(inventory,item){const normalized=normalizeItem(item);if(!normalized||inventory.items.some(existing=>existing.id===normalized.id)||carriedItems(inventory).length>=inventory.limit)return false;inventory.items.push(normalized);return true;}

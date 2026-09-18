@@ -327,6 +327,8 @@ body:has(#inventory:not([hidden])) .touch { display: none !important; }
 .item-card img { position: absolute; inset: 6px 6px 10px; display: block; width: calc(100% - 12px); height: calc(100% - 16px); object-fit: contain; object-position: center; filter: drop-shadow(0 2px 2px #000); }
 .item-card:hover, .item-card.selected { z-index: 2; outline: 2px solid #d7b46e; outline-offset: -3px; filter: brightness(1.18); }
 .item-card em { position: absolute; z-index: 3; right: 2px; bottom: 2px; min-width: 22px; padding: 1px 3px; color: #ded4cc; border: 1px solid #ffffff1c; border-radius: 2px; background: #06070bf2; font: 700 6px monospace; font-style: normal; line-height: 1; text-align: center; }
+.item-card.upgrade { box-shadow: inset 0 0 9px #45bd6055, 0 0 8px #45bd6033; }
+.upgrade-mark { position: absolute; z-index: 4; top: 2px; left: 2px; width: 14px; height: 14px; color: #caffbf; border: 1px solid #4eac62; border-radius: 50%; background: #12351bf2; box-shadow: 0 0 6px #62df7c88; font: 900 8px/13px monospace; text-align: center; }
 .item-card.equipped::after { content: "E"; position: absolute; z-index: 3; top: 2px; left: 2px; width: 12px; height: 12px; color: #ffe2e7; border: 1px solid #c45a6d; border-radius: 50%; background: #791a2d; box-shadow: 0 1px 3px #000; font: 900 7px/11px monospace; text-align: center; }
 
 .stash-tabs { height: 27px; display: grid; grid-template-columns: 1fr; gap: 2px; margin-top: 4px; }
