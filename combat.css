@@ -504,11 +504,19 @@ body:has(#inventory:not([hidden])) .touch { display: none !important; }
   .item-actions { gap: 9px; }
   .item-actions button { min-width: 112px; padding: 10px 14px; font: 800 11px sans-serif; }
   .inventory-help { flex: 0 0 36px; grid-template-columns: repeat(4, auto); justify-content: center; gap: 28px; padding: 10px 18px; font: 700 9px sans-serif; }
-  #item-tooltip { position: fixed; z-index: 40; width: 286px; padding: 14px 15px; pointer-events: none; color: #c9c2b8; border: 1px solid #75654c; border-radius: 3px; background: linear-gradient(145deg, #171a20fa, #080a0efa); box-shadow: 0 16px 36px #000d, inset 0 0 0 2px #080a0c; }
+  #item-tooltip { position: fixed; z-index: 40; width: 340px; max-height: calc(100vh - 24px); overflow: hidden; padding: 15px 16px; pointer-events: none; color: #c9c2b8; border: 1px solid #75654c; border-radius: 3px; background: linear-gradient(145deg, #171a20fa, #080a0efa); box-shadow: 0 16px 36px #000d, inset 0 0 0 2px #080a0c; }
   #item-tooltip h5 { margin: 0 0 7px; font: 700 15px Georgia, serif; }
   #item-tooltip small { display: block; color: #aaa294; font: 700 9px monospace; line-height: 1.45; }
-  #item-tooltip p { margin: 7px 0; color: #c8a56a; font: 700 10px sans-serif; }
-  #item-tooltip ul { margin: 8px 0; padding: 8px 0; list-style: none; border-block: 1px solid #383d42; }
+  #item-tooltip h6 { margin: 8px 0 4px; color: #8e8678; font: 800 9px sans-serif; letter-spacing: .6px; }
+  .item-rolls { margin-top: 9px; padding: 7px 9px 8px; border: 1px solid #34383d; background: #080b0ed9; }
+  .item-rolls h6:first-child { margin-top: 0; }
+  .roll-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: baseline; min-height: 19px; color: #bcb4a8; font: 700 10px sans-serif; }
+  .roll-row span { overflow: hidden; color: #d0b97f; text-overflow: ellipsis; white-space: nowrap; }
+  .roll-row b { color: #8fb2ff; }
+  .roll-row small { color: #686f78 !important; font-size: 8px !important; }
+  .legacy-affixes { margin: 3px 0; color: #c8a56a; font: 700 10px sans-serif; }
+  #item-tooltip .total-title { margin-top: 9px; }
+  #item-tooltip ul { margin: 4px 0 8px; padding: 7px 0; list-style: none; border-block: 1px solid #383d42; }
   #item-tooltip li { display: flex; justify-content: space-between; padding: 3px 0; color: #8fa7d8; font: 700 11px sans-serif; }
   #item-tooltip li b { color: #8db0ff; }
   #item-tooltip li em { margin-left: 10px; font-style: normal; }

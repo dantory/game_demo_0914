@@ -1,5 +1,5 @@
 // Fast top-down ARPG runtime. Sprite frame data lives in assets/manifest.json.
-import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,itemPower,loadInventory,lootProfile,saveInventory,sortInventory,unequipSlot} from './items.js?v=8';
+import {addItem,bonuses,createInventory,discardItem,equipItem,generateItem,itemIconKey,itemPower,loadInventory,lootProfile,saveInventory,sortInventory,unequipSlot} from './items.js?v=9';
 const LOOT_VISUALS={common:{color:'#b8b7ae',beam:30,glow:18},magic:{color:'#5aa8e8',beam:48,glow:23},rare:{color:'#e3c151',beam:70,glow:29},legendary:{color:'#e8793e',beam:94,glow:36}};
 export class Courtyard {
   constructor(canvas, manifest, images, onState) {
