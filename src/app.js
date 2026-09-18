@@ -1,4 +1,4 @@
-import {Courtyard} from './game.js?v=17';
+import {Courtyard} from './game.js?v=18';
 import {ITEM_ICON_PATHS,itemIconKey,itemPower,SLOTS} from './items.js?v=9';
 const $=id=>document.getElementById(id),overlay=$('overlay'),canvas=$('game'),bag=$('inventory'),bagNotice=$('inventory-notice'),itemTooltip=$('item-tooltip');let game,lastState,selectedItemId=null,bagSignature='',resumeAfterBag=false,lastSnapshot,noticeTimer;
 function show(title,message,label){$('title').textContent=title;$('message').textContent=message;$('start').textContent=label;overlay.hidden=false;}
