@@ -1,4 +1,4 @@
-import {Courtyard} from './game.js?v=16';
+import {Courtyard} from './game.js?v=17';
 import {ITEM_ICON_PATHS,itemIconKey,itemPower,SLOTS} from './items.js?v=9';
 const $=id=>document.getElementById(id),overlay=$('overlay'),canvas=$('game'),bag=$('inventory'),bagNotice=$('inventory-notice'),itemTooltip=$('item-tooltip');let game,lastState,selectedItemId=null,bagSignature='',resumeAfterBag=false,lastSnapshot,noticeTimer;
 function show(title,message,label){$('title').textContent=title;$('message').textContent=message;$('start').textContent=label;overlay.hidden=false;}
@@ -55,7 +55,7 @@ async function boot(){
   const response=await fetch('assets/manifest.json?v=6');if(!response.ok)throw Error('asset manifest');const manifest=await response.json(),images={};
   await Promise.all([...Object.entries(manifest).filter(([,v])=>v.src).map(([key,v])=>[key,v.src]),...Object.entries(ITEM_ICON_PATHS).map(([key,src])=>[`item-${key}`,src])].map(async([key,src])=>{const img=new Image();img.src=src;await img.decode();images[key]=img;}));
   game=new Courtyard(canvas,manifest,images,s=>{
-   $('health').textContent=`${s.hp} / ${s.maxHp}`;$('healthbar').style.width=`${100*s.hp/s.maxHp}%`;$('score').textContent=`${s.kills} / ${s.total}`;$('wave').textContent=s.wave;$('level').textContent=s.level;$('gold').textContent=s.gold;$('xpbar').style.width=`${100*s.xp/s.xpNext}%`;for(const name of ['cleave','dodge']){const cooldown=s.skills?.[name]||0,button=$(name+'-skill');button.classList.toggle('cooling',cooldown>0);$(name+'-cooldown').textContent=cooldown>0?cooldown.toFixed(1):'';}
+   $('health').textContent=`${s.hp} / ${s.maxHp}`;$('healthbar').style.width=`${100*s.hp/s.maxHp}%`;$('score').textContent=`${s.kills} / ${s.total}`;$('wave').textContent=s.wave;$('level').textContent=s.level;$('gold').textContent=s.gold;$('xpbar').style.width=`${100*s.xp/s.xpNext}%`;for(const name of ['cleave','dodge','warCry']){const cooldown=s.skills?.[name]||0,button=$(name+'-skill');button.classList.toggle('cooling',cooldown>0);button.classList.toggle('active',name==='warCry'&&(s.buffs?.warCry||0)>0);$(name+'-cooldown').textContent=cooldown>0?cooldown.toFixed(1):'';}
    renderBag(s);
    if(s.state!==lastState&&s.state==='won')show('공성 시험 완료','세 번의 습격을 모두 막아냈습니다. 더 빠른 기록으로 다시 도전해보세요.','다시 플레이');
    if(s.state!==lastState&&s.state==='lost')show('잿빛 안뜰 함락','거리를 벌리며 마우스로 적을 조준해 공격하세요.','다시 도전');lastState=s.state;

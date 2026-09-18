@@ -106,6 +106,9 @@
 .skill-slot > span:empty { display: none; }
 .skill-slot.cooling { border-color: #5e615f; filter: grayscale(.72); }
 .skill-slot.cooling::after { content: ""; position: absolute; inset: 4px; border: 1px solid #b49b6340; }
+.skill-slot.active { border-color: #f2cf6d; filter: none; box-shadow: inset 0 0 0 3px #0b1016, 0 0 18px #e6b94b99; }
+.skill-slot.active > i { animation: skill-pulse .7s ease-in-out infinite alternate; }
+@keyframes skill-pulse { to { transform: scale(1.13); filter: drop-shadow(0 0 7px #ffe497); } }
 .skill-slot.locked { cursor: not-allowed; opacity: .38; filter: grayscale(1); }
 .skill-slot.locked em { min-width: 31px; font-size: 6px; }
 
